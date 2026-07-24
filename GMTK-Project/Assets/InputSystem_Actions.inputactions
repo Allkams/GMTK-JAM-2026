@@ -991,6 +991,54 @@
                     "isPartOfComposite": false
                 }
             ]
+        },
+        {
+            "name": "Repair",
+            "id": "a50a2115-447f-42b7-8eb5-3ba8477fddbe",
+            "actions": [
+                {
+                    "name": "InteractHold",
+                    "type": "Button",
+                    "id": "164bb8c3-9bd1-4e80-ae49-e281b479f17e",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "ExitZoom",
+                    "type": "Button",
+                    "id": "20e49f1d-d222-41c9-bb0a-97434af1dfa9",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "d0179018-5ea8-4d7a-af2f-c00da31c346f",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "InteractHold",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "b78b83a2-95ae-4916-98fa-ff6b36fccfdb",
+                    "path": "<Keyboard>/escape",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "ExitZoom",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
         }
     ],
     "controlSchemes": [

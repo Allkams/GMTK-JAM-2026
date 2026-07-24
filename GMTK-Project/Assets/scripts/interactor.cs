@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -11,23 +12,39 @@ interface IInteractable
 
 public class interactor : MonoBehaviour
 {
+    public enum RayOrigin
+    {
+        Forward,
+        ScreenPoint
+    }
     [SerializeField] Transform InteractorSource;
+    [SerializeField] Camera RayCamera;
     [SerializeField] float InteractRange;
 
+    [SerializeField] RayOrigin rayOrigin = RayOrigin.Forward;
+
+    [SerializeField] InputActionReference interactAction;
+
     private IInteractable currentInteractable;
+    private bool isLocked;
+
+    void OnEnable() => interactAction.action.Enable();
+
+    void OnDisable() => interactAction.action.Disable();
 
     void Update()
     {
         CheckForInteractables();
+        TryInteract();
     }
 
     void CheckForInteractables()
     {
+        if(isLocked) { return; }
+
         IInteractable newInteractable = null;
 
-        Ray r = new(InteractorSource.position, InteractorSource.forward);
-
-        if(Physics.Raycast(r, out RaycastHit hitInfo, InteractRange))
+        if(Physics.Raycast(BuildRay(), out RaycastHit hitInfo, InteractRange))
         {
             hitInfo.collider.TryGetComponent(
                 out newInteractable
@@ -44,14 +61,33 @@ public class interactor : MonoBehaviour
         }
     }
 
-    public void TryInteract(InputAction.CallbackContext ctx)
+    Ray BuildRay()
     {
+        if(rayOrigin == RayOrigin.ScreenPoint && RayCamera != null && Mouse.current != null)
+        {
+            return RayCamera.ScreenPointToRay(Mouse.current.position.ReadValue());    
+        }
 
-        if(!ctx.performed)
+        return new(InteractorSource.position, InteractorSource.forward);
+    }
+
+    public void TryInteract()
+    {
+        if(!interactAction.action.WasPressedThisFrame())
         {
             return;
         }
 
         currentInteractable?.Interact();
+    }
+
+    public void SetLocked(bool locked)
+    {
+        isLocked = locked;
+        if(locked)
+        {
+            currentInteractable?.Highlight(false);
+            currentInteractable = null;
+        }
     }
 }

@@ -3,6 +3,8 @@ using UnityEngine;
 public class itemPickUp : MonoBehaviour, IInteractable
 {
     [SerializeField] Renderer meshRenderer;
+    [SerializeField] Repair.ToolDefinition tool;
+    [SerializeField] Repair.SimpleToolInventory inventory;
 
     private Material material;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -21,6 +23,10 @@ public class itemPickUp : MonoBehaviour, IInteractable
     public void Interact()
     {
         print("I was pressed");
+        if(inventory.TryAdd(tool))
+        {
+            gameObject.SetActive(false);
+        }
     }
 
     public void Highlight(bool state)
