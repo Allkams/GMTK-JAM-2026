@@ -17,6 +17,6 @@ MonoBehaviour:
   prompt: Hold to repair
   rotateTargetDegrees: 1800
   rotateAxisLocal: {x: 0, y: 0, z: 1}
-  linearAxisLocal: {x: 0, y: 0, z: 1}
-  linearTargetDistance: 0.15
+  linearAxisLocal: {x: 1, y: 0, z: 0}
+  linearTargetDistance: 0.1
   linearInverted: 0

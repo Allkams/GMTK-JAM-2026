@@ -5,11 +5,13 @@ namespace Repair
 {
     public sealed class RotateStepBehaviour : IRepairStepBehaviour
     {
-        private const float DegreesPerPointerUnit = 10f;
+        private const float DegreesPerPointerUnit = 30f;
 
         private RepairStepData data;
         private Transform target;
         private float accumulatedDegrees;
+
+        private Vector3 startLocalPosition;
 
 
         public bool IsComplete {get; private set;}
@@ -20,6 +22,7 @@ namespace Repair
             this.data = data;
             this.target = target;
             accumulatedDegrees = 0f;
+            startLocalPosition = target.localPosition;
             IsComplete = false;
             Progress = 0f;
         }
@@ -42,12 +45,16 @@ namespace Repair
                 return;
             }
 
-            float degreesThisFrame = pointerDelta.x * DegreesPerPointerUnit;
+            float degreesThisFrame = pointerDelta.x * DegreesPerPointerUnit * deltaTime;
             accumulatedDegrees += degreesThisFrame;
 
             target.Rotate(data.RotateAxisLocal, degreesThisFrame, Space.Self);
 
+            float sign = data.LinearInverted ? -1f : 1f;
+
             Progress = Mathf.Clamp01(Mathf.Abs(accumulatedDegrees) / data.RotateTargetDegrees);
+            Vector3 pos = startLocalPosition + data.LinearAxisLocal * data.LinearTargetDistance * sign;
+            target.localPosition = Vector3.Lerp(startLocalPosition,  pos, Progress);
             IsComplete = Progress >= 1f;
         }
     }

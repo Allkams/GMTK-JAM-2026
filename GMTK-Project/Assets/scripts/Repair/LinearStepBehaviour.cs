@@ -40,7 +40,7 @@ namespace Repair
 
             float sign = data.LinearInverted ? -1f : 1f;
 
-            float distanceThisFrame = pointerDelta.y * unitsPerPointerUnit * sign;
+            float distanceThisFrame = pointerDelta.y * unitsPerPointerUnit * sign * deltaTime;
 
             accumulatedDistance = Mathf.Clamp(accumulatedDistance + distanceThisFrame, 0f, data.LinearTargetDistance);
 
