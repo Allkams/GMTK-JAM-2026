@@ -15,8 +15,8 @@ MonoBehaviour:
   stepType: 0
   requiredTool: {fileID: 0}
   prompt: Hold to repair
-  rotateTargetDegrees: 720
-  rotateAxisLocal: {x: 0, y: 1, z: 0}
+  rotateTargetDegrees: 1800
+  rotateAxisLocal: {x: 0, y: 0, z: 1}
   linearAxisLocal: {x: 0, y: 0, z: 1}
   linearTargetDistance: 0.15
   linearInverted: 0

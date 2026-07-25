@@ -1,16 +1,20 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class itemPickUp : MonoBehaviour, IInteractable
 {
-    [SerializeField] Renderer meshRenderer;
+    [SerializeField] Renderer[] meshRenderers;
     [SerializeField] Repair.ToolDefinition tool;
     [SerializeField] Repair.SimpleToolInventory inventory;
 
-    private Material material;
+    private List<Material> materials = new();
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        material = meshRenderer.material;
+        for(int i = 0; i < meshRenderers.Length; i++)
+        {
+            materials.Add(meshRenderers[i].material);
+        }
         Highlight(false);
     }
 
@@ -33,12 +37,18 @@ public class itemPickUp : MonoBehaviour, IInteractable
     {
         if(state)
         {
-            material.EnableKeyword("_EMISSION");
-            material.SetColor("_EmissionColor", Color.yellow * 5f);
+            foreach(var material in materials)
+            {
+                material.EnableKeyword("_EMISSION");
+                material.SetColor("_EmissionColor", Color.yellow * 5f);
+            }
         }
         else
         {
-            material.DisableKeyword("_EMISSION");
+            foreach(var material in materials)
+            {
+                material.DisableKeyword("_EMISSION");
+            }  
         }
     }
 
