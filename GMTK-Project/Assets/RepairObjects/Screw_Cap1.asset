@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: Screw_Cap1
   m_EditorClassIdentifier: Assembly-CSharp::Repair.RepairStepData
   stepType: 0
-  requiredTool: {fileID: 0}
-  prompt: Hold to repair
-  rotateTargetDegrees: 1800
+  requiredTool: {fileID: 11400000, guid: 9b74ca7ec4e46f743bb0fd0a149c2e19, type: 2}
+  prompt: Hold to unscew
+  rotateTargetDegrees: 720
   rotateAxisLocal: {x: 0, y: 0, z: 1}
   linearAxisLocal: {x: 1, y: 0, z: 0}
   linearTargetDistance: 0.1

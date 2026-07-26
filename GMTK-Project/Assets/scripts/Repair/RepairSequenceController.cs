@@ -16,6 +16,9 @@ namespace Repair
     { 
         [SerializeField] private SimpleToolInventory inventory;
         [SerializeField] private interactor interactorToLock;
+        [SerializeField] private Collider triggerCollider;
+        [SerializeField] private float fixTime;
+
 
         public UnityEvent<RepairStepTarget> OnStepCompleted;
         public UnityEvent OnSequenceCompleted;
@@ -23,6 +26,10 @@ namespace Repair
         public UnityEvent OnRepairLeave;
 
         public IToolInventory Inventory => inventory;
+
+        public Collider TriggerCollider => triggerCollider;
+
+        public float FixTime => fixTime;
 
         private readonly List<RepairStepTarget> targets = new();
         private int completedCount;

@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Repair.RepairStepData
   stepType: 1
   requiredTool: {fileID: 0}
-  prompt: Hold to repair
+  prompt: Hold to move plate
   rotateTargetDegrees: 720
   rotateAxisLocal: {x: 0, y: 0, z: 1}
   linearAxisLocal: {x: 0, y: 0, z: 1}

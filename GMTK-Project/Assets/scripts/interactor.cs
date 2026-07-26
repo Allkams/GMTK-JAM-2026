@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -24,6 +25,7 @@ public class interactor : MonoBehaviour
     [SerializeField] RayOrigin rayOrigin = RayOrigin.Forward;
 
     [SerializeField] InputActionReference interactAction;
+    [SerializeField] TextMeshProUGUI PromptText;
 
     private IInteractable currentInteractable;
     private bool isLocked;
@@ -56,6 +58,14 @@ public class interactor : MonoBehaviour
             currentInteractable?.Highlight(false);
 
             currentInteractable = newInteractable;
+
+            if(currentInteractable != null)
+            {
+                PromptText.text = currentInteractable.GetPrompt();
+            } else
+            {
+                PromptText.text = "";
+            }
 
             currentInteractable?.Highlight(true);
         }

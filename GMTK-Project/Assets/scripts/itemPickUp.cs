@@ -26,7 +26,6 @@ public class itemPickUp : MonoBehaviour, IInteractable
 
     public void Interact()
     {
-        print("I was pressed");
         if(inventory.TryAdd(tool))
         {
             gameObject.SetActive(false);
@@ -54,6 +53,6 @@ public class itemPickUp : MonoBehaviour, IInteractable
 
     public string GetPrompt()
     {
-        return "Screwdriver";
+        return "Press E to pick up " + tool.DisplayName;
     }
 }

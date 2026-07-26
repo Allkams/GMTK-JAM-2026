@@ -5,7 +5,7 @@ namespace Repair
 {
     public sealed class RotateStepBehaviour : IRepairStepBehaviour
     {
-        private const float DegreesPerPointerUnit = 30f;
+        private const float DegreesPerPointerUnit = 180f;
 
         private RepairStepData data;
         private Transform target;
@@ -45,7 +45,7 @@ namespace Repair
                 return;
             }
 
-            float degreesThisFrame = pointerDelta.x * DegreesPerPointerUnit * deltaTime;
+            float degreesThisFrame = DegreesPerPointerUnit * deltaTime;
             accumulatedDegrees += degreesThisFrame;
 
             target.Rotate(data.RotateAxisLocal, degreesThisFrame, Space.Self);

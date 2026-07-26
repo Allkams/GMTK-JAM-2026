@@ -4,7 +4,7 @@ namespace Repair
 {
     public sealed class LinearStepBehaviour : IRepairStepBehaviour
     {
-        private const float unitsPerPointerUnit = 0.04f;
+        private const float unitsPerPointerUnit = 0.4f;
         
         private RepairStepData data;
         private Transform target;
@@ -40,7 +40,7 @@ namespace Repair
 
             float sign = data.LinearInverted ? -1f : 1f;
 
-            float distanceThisFrame = pointerDelta.y * unitsPerPointerUnit * sign * deltaTime;
+            float distanceThisFrame = unitsPerPointerUnit * sign * deltaTime;
 
             accumulatedDistance = Mathf.Clamp(accumulatedDistance + distanceThisFrame, 0f, data.LinearTargetDistance);
 
