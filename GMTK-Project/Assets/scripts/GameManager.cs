@@ -76,7 +76,7 @@ public class GameManager : MonoBehaviour
                 {
                     controllers[i].ResetSequence();
                 }
-                int problem = Random.Range(0, controllers.Length-1);
+                int problem = Random.Range(0, controllers.Length);
                 currentSequence = controllers[problem];
                 currentSequence.TriggerCollider.enabled = true;
             }
