@@ -28,7 +28,7 @@ public class RepairStepTarget : MonoBehaviour, IInteractable
     private bool isEngaged; 
 
     private Vector3 resetLocalPosition;
-    private Quaternion resetLocalRotatiion;
+    private Quaternion resetLocalRotation;
     private Material material;
 
     public bool HasCompletedPrimary => phase != Phase.AwaitingPrimary;
@@ -39,7 +39,7 @@ public class RepairStepTarget : MonoBehaviour, IInteractable
     private void Awake()
     {
         resetLocalPosition = transform.localPosition;
-        resetLocalRotatiion = transform.rotation;
+        resetLocalRotation = transform.localRotation;
         owner.RegisterTarget(this);
     }
 
@@ -126,7 +126,7 @@ public class RepairStepTarget : MonoBehaviour, IInteractable
         phase = Phase.AwaitingPrimary;
         behaviour = null;
         isEngaged = false;
-        transform.SetLocalPositionAndRotation(resetLocalPosition, resetLocalRotatiion);
+        transform.SetLocalPositionAndRotation(resetLocalPosition, resetLocalRotation);
         OnReset?.Invoke();
     }
 
