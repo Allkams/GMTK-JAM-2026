@@ -94,11 +94,46 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RepairStepTarget
   meshRenderer: {fileID: 7649458238846859867}
-  data: {fileID: 11400000, guid: 98aae1c9b997acb429b9d6aec577bc5a, type: 2}
+  primaryData: {fileID: 11400000, guid: 98aae1c9b997acb429b9d6aec577bc5a, type: 2}
+  reverseData: {fileID: 11400000, guid: 80909d1698d877e47a60c473faafc017, type: 2}
   owner: {fileID: 0}
-  visualToHideOnComplete: {fileID: 7649458238844593307}
   prerequisites: []
+  reversePrerequisites:
+  - {fileID: 0}
   interactHold: {fileID: -630044004152346173, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+  OnPrimaryCompleted:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 7649458238844593307}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 8891839475429575937}
+        m_TargetAssemblyTypeName: RepairStepTarget, Assembly-CSharp
+        m_MethodName: Highlight
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  OnReverseCompleted:
+    m_PersistentCalls:
+      m_Calls: []
+  OnReset:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!23 &7649458238846859867 stripped
 MeshRenderer:
   m_CorrespondingSourceObject: {fileID: 2300000, guid: 86fb0c882e9516049bdd6f1a81d3bfde, type: 3}

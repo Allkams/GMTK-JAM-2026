@@ -18,10 +18,13 @@ namespace Repair
         [SerializeField] private interactor interactorToLock;
         [SerializeField] private Collider triggerCollider;
         [SerializeField] private float fixTime;
+        [SerializeField] private string breakdownText;
+        [SerializeField] private int errorCode;
 
 
         public UnityEvent<RepairStepTarget> OnStepCompleted;
         public UnityEvent OnSequenceCompleted;
+        public UnityEvent OnSequenceReset;
         public UnityEvent<ToolDefinition> OnRequiredToolMissing;
         public UnityEvent OnRepairLeave;
 
@@ -30,6 +33,8 @@ namespace Repair
         public Collider TriggerCollider => triggerCollider;
 
         public float FixTime => fixTime;
+        public string BreakdownText => breakdownText;
+        public int ErrorCode => errorCode;
 
         private readonly List<RepairStepTarget> targets = new();
         private int completedCount;
@@ -63,6 +68,18 @@ namespace Repair
         public void NotifyLeavingRepairing()
         {
             OnRepairLeave?.Invoke();
+        }
+
+        public void ResetSequence()
+        {
+            completedCount = 0;
+
+            foreach (RepairStepTarget target in targets)
+            {
+                target.ResetStep();
+            }
+
+            OnSequenceReset?.Invoke();
         }
     }
 }

@@ -63,7 +63,7 @@ public class LogSequenceSystem : MonoBehaviour
 
         if(logTimer >= timeTillNextLog)
         {
-            if(lastStep >= LogSteps.Length)
+            if(lastStep >= LogSteps.Length-1)
             {
                 lastStep = -1;
             }
@@ -78,9 +78,9 @@ public class LogSequenceSystem : MonoBehaviour
         }
     }
 
-    public void CatchError(string errorMessage)
+    public void CatchError(int errorCode, string errorMessage)
     {
-        LogData.Add("ERROR: " + errorMessage);
+        LogData.Add("ERROR " + errorCode.ToString() + ": " + errorMessage);
         if(LogData.Count >= LogSteps.Length)
         {
             LogData.RemoveAt(0);

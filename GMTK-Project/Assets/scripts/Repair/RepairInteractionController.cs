@@ -52,6 +52,8 @@ namespace Repair
             repairCamera.gameObject.SetActive(false);
             playerCamera.gameObject.SetActive(true);
             activeSequence = null;
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
         }
     }
     

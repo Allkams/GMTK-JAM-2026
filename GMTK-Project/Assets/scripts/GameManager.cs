@@ -5,6 +5,10 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
+
 public class GameManager : MonoBehaviour
 {
     public enum State
@@ -15,7 +19,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] RepairSequenceController[] controllers;
     [SerializeField] TextMeshPro TimeText;
 
-    public UnityEvent<string> OnNewError;
+    public UnityEvent<int, string> OnNewError;
 
     public State state = State.Waiting;
 
@@ -30,6 +34,19 @@ public class GameManager : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
     {
+        #if UNITY_EDITOR
+        var gameWindow = EditorWindow.GetWindow(typeof(EditorWindow).Assembly.GetType("UnityEditor.GameView"));
+        gameWindow.Focus();
+        gameWindow.SendEvent(new Event{
+            button = 0, 
+            clickCount = 1, 
+            type = EventType.MouseDown, 
+            mousePosition = gameWindow.rootVisualElement.contentRect.center
+            });
+        #endif
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+        
         for(int i = 0; i < controllers.Length; i++)
         {
             controllers[i].TriggerCollider.enabled = false;
@@ -50,18 +67,20 @@ public class GameManager : MonoBehaviour
 
         if(state == State.Waiting && currentTimerElasped >= timeUntilNextFailure)
         {
-            // TODO: Start next sequence;
-            // TODO: Random a new timeUntilNextFailure
             print("Chill time over!");
             state = State.RunningSequence;
             currentTimerElasped = 0f;
             if(controllers.Length > 0)
             {
-                currentSequence = controllers.First();
+                for(int i = 0; i < controllers.Length; i++)
+                {
+                    controllers[i].ResetSequence();
+                }
+                int problem = Random.Range(0, controllers.Length-1);
+                currentSequence = controllers[problem];
                 currentSequence.TriggerCollider.enabled = true;
             }
-            // TODO: Give the sequence a name or problem.
-            OnNewError.Invoke("Broken fuse.");
+            OnNewError.Invoke(currentSequence.ErrorCode, currentSequence.BreakdownText);
         }
 
         currentTimerElasped += Time.deltaTime;
@@ -85,6 +104,16 @@ public class GameManager : MonoBehaviour
             string secondsStartZero = seconds >= 10 ? "" : "0";
             TimeText.text = "TIME: " + minutesStartZero + minutes.ToString() + ":" + secondsStartZero + seconds.ToString();
         }
+
+    }
+
+    public void CompleteCurrentSequence()
+    {
+        TimeText.text = "No Errors.";
+        currentTimerElasped = 0f;
+        timeUntilNextFailure = Random.Range(5,60);
+        state = State.Waiting;
+        currentSequence = null;
 
     }
 

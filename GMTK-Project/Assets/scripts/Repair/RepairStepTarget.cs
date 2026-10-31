@@ -1,24 +1,45 @@
 using Repair;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.InputSystem;
 
 public class RepairStepTarget : MonoBehaviour, IInteractable
 {
+    private enum Phase
+    {
+        AwaitingPrimary,
+        AwaitingReverse,
+        Complete
+    }
     [SerializeField] Renderer meshRenderer;
-    [SerializeField] private RepairStepData data;
+    [SerializeField] private RepairStepData primaryData;
+    [SerializeField] private RepairStepData reverseData;
     [SerializeField] private RepairSequenceController owner;
-    [SerializeField] private GameObject visualToHideOnComplete;
     [SerializeField] private RepairStepTarget[] prerequisites;
+    [SerializeField] private RepairStepTarget[] reversePrerequisites;
     [SerializeField] private InputActionReference interactHold;
 
+    public UnityEvent OnPrimaryCompleted;
+    public UnityEvent OnReverseCompleted;
+    public UnityEvent OnReset;
+
+    private Phase phase = Phase.AwaitingPrimary;
     private IRepairStepBehaviour behaviour;
     private bool isEngaged; 
+
+    private Vector3 resetLocalPosition;
+    private Quaternion resetLocalRotatiion;
     private Material material;
 
-    public bool IsComplete {get; private set;}
+    public bool HasCompletedPrimary => phase != Phase.AwaitingPrimary;
+    public bool IsFullyComplete => phase == Phase.Complete;
+
+    private RepairStepData CurrentData => phase == Phase.AwaitingPrimary ? primaryData : reverseData;
 
     private void Awake()
     {
+        resetLocalPosition = transform.localPosition;
+        resetLocalRotatiion = transform.rotation;
         owner.RegisterTarget(this);
     }
 
@@ -47,16 +68,20 @@ public class RepairStepTarget : MonoBehaviour, IInteractable
 
         if(behaviour.IsComplete)
         {
-            CompleteStep();
+            CompletePhase();
         }
     }
 
     public void Interact()
     {
-        if(IsComplete || isEngaged || !PrerequisitesMet())
+        print(PrerequisitesMet());
+        if(phase == Phase.Complete || isEngaged || !PrerequisitesMet())
         {
             return;
         }
+
+        RepairStepData data = CurrentData;
+        print("Data: " + data.name);
 
         if(data.RequiredTool != null && !owner.Inventory.HasTool(data.RequiredTool))
         {
@@ -77,8 +102,9 @@ public class RepairStepTarget : MonoBehaviour, IInteractable
 
     public void Highlight(bool state)
     {
-        if(IsComplete || isEngaged || !PrerequisitesMet())
+        if(phase == Phase.Complete || isEngaged || !PrerequisitesMet())
         {
+            material.DisableKeyword("_EMISSION");
             return;
         }
 
@@ -93,13 +119,26 @@ public class RepairStepTarget : MonoBehaviour, IInteractable
         }
     }
 
-    public string GetPrompt() {return PrerequisitesMet() ? data.Prompt : string.Empty;}
+    public string GetPrompt() {return (phase != Phase.Complete && PrerequisitesMet()) ? CurrentData.Prompt : string.Empty;}
+
+    public void ResetStep()
+    {
+        phase = Phase.AwaitingPrimary;
+        behaviour = null;
+        isEngaged = false;
+        transform.SetLocalPositionAndRotation(resetLocalPosition, resetLocalRotatiion);
+        OnReset?.Invoke();
+    }
 
     private bool PrerequisitesMet()
     {
-        foreach(RepairStepTarget prerequisite in prerequisites)
+        RepairStepTarget[] required = phase == Phase.AwaitingPrimary ? prerequisites : reversePrerequisites;
+
+        foreach(RepairStepTarget requirement in required)
         {
-            if(!prerequisite.IsComplete)
+            bool met = phase == Phase.AwaitingPrimary ? requirement.HasCompletedPrimary : requirement.IsFullyComplete; 
+
+            if(!met)
             {
                 return false;
             }
@@ -113,23 +152,34 @@ public class RepairStepTarget : MonoBehaviour, IInteractable
         owner.SetInteractorLocked(false);
     }
 
-    private void CompleteStep()
+    private void CompletePhase()
     {
+        RepairStepData finishedData = CurrentData;
         behaviour.OnInteractionEnd();
+        behaviour = null;
         isEngaged = false;
-        IsComplete = true;
         owner.SetInteractorLocked(false);
 
-        if(data.RequiredTool != null && data.RequiredTool.IsConsumedOnUse)
+        if(finishedData.RequiredTool != null && finishedData.RequiredTool.IsConsumedOnUse)
         {
-            owner.Inventory.ConsumeTool(data.RequiredTool);
+            owner.Inventory.ConsumeTool(finishedData.RequiredTool);
         }
 
-        if(visualToHideOnComplete != null)
+        if(phase == Phase.AwaitingPrimary)
         {
-            visualToHideOnComplete.SetActive(false);
+            phase = reverseData != null ? Phase.AwaitingReverse : Phase.Complete;
+            OnPrimaryCompleted?.Invoke();
+        }
+        else
+        {
+            phase = Phase.Complete;
+            OnReverseCompleted?.Invoke();
         }
 
-        owner.NotifyStepCompleted(this);
+        if(phase == Phase.Complete)
+        {
+            owner.NotifyStepCompleted(this);
+        }
+
     }
 }
