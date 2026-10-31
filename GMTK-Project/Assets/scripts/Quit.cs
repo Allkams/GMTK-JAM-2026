@@ -7,7 +7,7 @@ public class Quit : MonoBehaviour
 
     public void QuitGame()
     {
-        if(repairCamera.enabled)
+        if(repairCamera.gameObject.activeInHierarchy)
         {
             return;
         }
