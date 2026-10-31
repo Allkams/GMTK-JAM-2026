@@ -8,48 +8,49 @@ namespace Repair
 {
     public class SimpleToolInventory : MonoBehaviour, IToolInventory
     {
-        [SerializeField] int capacity = 3;
-        [SerializeField] List<Image> images = new(3);
+
+        [SerializeField] List<Image> images = new();
 
         
         public UnityEvent<List<ToolDefinition>> OnInventoryChanged;
 
-        private readonly List<ToolDefinition> carriedTools = new();
-        private bool[] placement = {false, false, false};
+        private ToolDefinition[] slots;
+
+        private void Awake()
+        {
+            slots = new ToolDefinition[images.Count];
+        }
 
         public bool TryAdd(ToolDefinition tool)
         {
-            if(carriedTools.Count >= capacity)
+            int slot = System.Array.IndexOf(slots, null);
+            if(slot < 0)
             {
                 return false;
             }
 
-            carriedTools.Add(tool);
-            int toolIndex = -1;
-            for(int i = 0; i < 3; i++)
-            {
-                if(!placement[i])
-                {
-                    toolIndex = i;
-                    placement[i] = true;
-                    break;
-                }
-            }
-            tool.SetToolSlot(toolIndex);
-            images[toolIndex].sprite = tool.Icon;
-            OnInventoryChanged?.Invoke(carriedTools);
+            slots[slot] = tool;
+            images[slot].sprite = tool.Icon;
+            OnInventoryChanged?.Invoke(CarriedTools());
             return true;
         }
         public void ConsumeTool(ToolDefinition tool)
         {
-            int toolSlot = tool.GetToolSlot();
-            carriedTools.Remove(tool);
-            OnInventoryChanged?.Invoke(carriedTools);
-            images[toolSlot].sprite = null;
-            placement[toolSlot] = false;
+            int slot = System.Array.IndexOf(slots, tool);
+
+            if(slot < 0)
+            {
+                return;
+            }
+
+            slots[slot] = null;
+            images[slot].sprite = null;
+            OnInventoryChanged?.Invoke(CarriedTools());
         }
 
-        public bool HasTool(ToolDefinition tool) => carriedTools.Contains(tool);
+        public bool HasTool(ToolDefinition tool) => System.Array.IndexOf(slots, tool ) >= 0;
+
+        private List<ToolDefinition> CarriedTools() => slots.Where(t => t != null).ToList();
 
     }
 
